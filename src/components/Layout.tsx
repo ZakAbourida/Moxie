@@ -20,7 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navItems = [
     { name: "Dashboard", icon: <LayoutDashboard size={20} />, href: "/" },
     { name: "Athletes", icon: <Users size={20} />, href: "/athletes" },
-    { name: "Training Plans", icon: <ClipboardList size={20} />, href: "#" },
+    { name: "Training Plans", icon: <ClipboardList size={20} />, href: "/training-plans" },
     { name: "Calendar", icon: <Calendar size={20} />, href: "#" },
     { name: "Analytics", icon: <BarChart2 size={20} />, href: "#" },
     { name: "Settings", icon: <Settings size={20} />, href: "#" },
