@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Menu, X, LayoutDashboard, Users, Calendar, ClipboardList, Settings, BarChart2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -9,19 +10,25 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
   const navItems = [
-    { name: "Dashboard", icon: <LayoutDashboard size={20} />, href: "#" },
-    { name: "Athletes", icon: <Users size={20} />, href: "#" },
+    { name: "Dashboard", icon: <LayoutDashboard size={20} />, href: "/" },
+    { name: "Athletes", icon: <Users size={20} />, href: "/athletes" },
     { name: "Training Plans", icon: <ClipboardList size={20} />, href: "#" },
     { name: "Calendar", icon: <Calendar size={20} />, href: "#" },
     { name: "Analytics", icon: <BarChart2 size={20} />, href: "#" },
     { name: "Settings", icon: <Settings size={20} />, href: "#" },
   ];
+
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
 
   return (
     <div className="min-h-screen flex">
@@ -55,8 +62,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <a
                 key={item.name}
                 href={item.href}
+                onClick={(e) => {
+                  if (item.href !== "#") {
+                    e.preventDefault();
+                    navigate(item.href);
+                  }
+                }}
                 className={cn(
                   "flex items-center space-x-3 px-2 py-3 rounded-md hover:bg-sidebar-accent transition-colors",
+                  isActive(item.href) && "bg-sidebar-accent",
                   !sidebarOpen && "justify-center px-0"
                 )}
               >
