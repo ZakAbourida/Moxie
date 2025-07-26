@@ -1,8 +1,10 @@
 
 import React, { useState } from "react";
-import { Menu, X, LayoutDashboard, Users, Calendar, ClipboardList, Settings, BarChart2 } from "lucide-react";
+import { Menu, X, LayoutDashboard, Users, Calendar, ClipboardList, Settings, BarChart2, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,9 +14,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
   };
 
   const navItems = [
@@ -43,9 +51,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="flex items-center justify-between h-16 px-4 border-b border-sidebar-border">
           <div className={cn("flex items-center space-x-2", !sidebarOpen && "justify-center w-full")}>
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-              <span className="font-bold text-white">AA</span>
+              <span className="font-bold text-white">A</span>
             </div>
-            {sidebarOpen && <span className="font-bold text-lg">AthleteAscend</span>}
+            {sidebarOpen && <span className="font-bold text-lg">Athletica</span>}
           </div>
           <button
             onClick={toggleSidebar}
@@ -56,8 +64,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
 
         {/* Sidebar content */}
-        <div className="p-4">
-          <nav className="space-y-1">
+        <div className="p-4 flex flex-col h-full">
+          <nav className="space-y-1 flex-1">
             {navItems.map((item) => (
               <a
                 key={item.name}
@@ -79,6 +87,28 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </a>
             ))}
           </nav>
+
+          {/* User profile and logout */}
+          <div className={cn("border-t border-sidebar-border pt-4", !sidebarOpen && "px-0")}>
+            {sidebarOpen && user && (
+              <div className="mb-3">
+                <div className="text-sm font-medium">{user.first_name} {user.last_name}</div>
+                <div className="text-xs text-sidebar-foreground/70 capitalize">{user.role}</div>
+              </div>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className={cn(
+                "w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent",
+                !sidebarOpen && "px-2 justify-center"
+              )}
+            >
+              <LogOut size={16} />
+              {sidebarOpen && <span className="ml-2">Logout</span>}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -97,8 +127,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </button>
           )}
           <div className="flex-1">
-            <h1 className="text-xl font-semibold">Athlete Ascend Track</h1>
+            <h1 className="text-xl font-semibold">Athletica Training Management</h1>
           </div>
+          {user && (
+            <div className="flex items-center space-x-3">
+              <span className="text-sm text-muted-foreground">
+                Welcome, {user.first_name}
+              </span>
+            </div>
+          )}
         </header>
 
         {/* Page content */}
