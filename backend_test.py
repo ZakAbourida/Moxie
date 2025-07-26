@@ -135,20 +135,17 @@ class AthlicaAPITester:
     def test_unauthorized_access(self):
         """Test that protected endpoints require authentication"""
         try:
-            # Temporarily remove auth headers
-            temp_headers = self.session.headers.copy()
-            self.session.headers.pop('Authorization', None)
+            # Create a new session without auth headers
+            unauth_session = requests.Session()
+            unauth_session.headers.update({'Content-Type': 'application/json'})
             
-            response = self.session.get(f"{API_BASE}/athletes")
-            
-            # Restore headers
-            self.session.headers.update(temp_headers)
+            response = unauth_session.get(f"{API_BASE}/athletes")
             
             if response.status_code == 401:
                 self.log_test("Unauthorized Access", True, "Protected endpoint correctly requires authentication")
                 return True
             else:
-                self.log_test("Unauthorized Access", False, f"Expected 401, got {response.status_code}")
+                self.log_test("Unauthorized Access", False, f"Expected 401, got {response.status_code} - {response.text}")
                 return False
         except Exception as e:
             self.log_test("Unauthorized Access", False, f"Exception testing unauthorized access: {str(e)}")
